@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <mkl_cblas.h>
 
-#define N 1009
+#define N 2048
 #define REPEATS 25
 
 // define a test element to be output
@@ -33,30 +33,19 @@ int main(void) {
     m2[i] = (float) rand()/(float) RAND_MAX;
     res[i] = 0.0;
   }
-  /* DEBUG
-  printf("m1\n");
-  for (i=0; i<N*N; i++) {
-    printf("%f ",m1[i]);
-  }
-  printf("\n");
-  printf("m2\n");
-  for (i=0; i<N*N; i++) {
-    printf("%f ",m2[i]);
-  }
-  printf("\n");
-  */
 
   // mat mat mult
   // repeat a number of times
   int repeat;
   for (repeat=0; repeat<REPEATS; repeat++) {
     printf("Run %d\n", repeat);
+    
     // reset res
     for (i=0; i<N*N; i++) {
       res[i] = 0.0;
     }
+
     timer[4] = omp_get_wtime();
-    //    mult(res, m1, m2);
 
     // mat mat mult LIBRARY
     // float => single precision -> sgemm
@@ -64,8 +53,10 @@ int main(void) {
     // sgemm (TRANSA, TRANSB, M, N, K, ALPHA, A, LDA, B, LDB, BETA, C, LDC)
     // to form C = alpha*A*B + beta*C
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, N,N,N, 1.0, m1, N, m2, N, 0.0, res,N);
+
     timer[5] = omp_get_wtime();
-    // output a val to avoid compiler removing
+
+    // output a val to avoid compiler removing res
     printf("res[outputElement] = %f\n",res[outputElement]); 
     printf("MAT MAT MULT: %f milliseconds\n\n", 1000.0*(timer[5]-timer[4]));
   }
