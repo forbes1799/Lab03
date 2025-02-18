@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <time.h>
 #include <omp.h>
-int N = 99999;
-int mat[99999][99999];
+int N = 48000;
+int mat[48000][48000];
 
 void main()
 
