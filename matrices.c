@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 #define N 2048
-#define REPEATS 5
+#define REPEATS 3
 
 // define a test element to be output
 #define NOUT 1
