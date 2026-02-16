@@ -13,7 +13,7 @@ void mult(float*, float*, float*, int);
 
 int main(void) {
 	float *m1, *m2, *res;
-	int batches = 1;
+	int batches = omp_get_max_threads();
   	int   matrixByte = batches*N*N*sizeof(float);
 	int i,j,k;
 	double timer[8];
@@ -56,18 +56,22 @@ int main(void) {
 void mult(float *res, float *m1, float *m2, int batches) {
 	int b,i,j,k;
 
-	for (b=0; b < batches; b++){
-		int batch_offset = b * N * N;
-		for (i=0; i<N; i++) {
-			for (j=0; j<N; j++) {
-				int ij = batch_offset + i*N+j; 
-				for (k=0; k<N; k++) {
-					
-					int ik = batch_offset + i*N+k;
-					int kj = batch_offset + k*N+j;
+	#pragma omp parallel default(none) private(b, i, j, k) shared(batches, res, m1, m2)
+	{
+		#pragma omp for  
+		for (b=0; b < batches; b++){
+			int batch_offset = b * N * N;
+			for (i=0; i<N; i++) {
+				for (j=0; j<N; j++) {
+					int ij = batch_offset + i*N+j; 
+					for (k=0; k<N; k++) {
+						
+						int ik = batch_offset + i*N+k;
+						int kj = batch_offset + k*N+j;
 
-					res[ij] += m1[ik] * m2[kj];
-					
+						res[ij] += m1[ik] * m2[kj];
+						
+					}
 				}
 			}
 		}
