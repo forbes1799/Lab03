@@ -2,7 +2,7 @@
 
 #SBATCH -D ./
 #SBATCH -p course
-#SBATCH -t 5
+#SBATCH -t 15
 
 cores=${SLURM_CPUS_PER_TASK:-1}
 
